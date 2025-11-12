@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #b993d6, #8ca6db);
+      margin: 0;
+      padding: 0;
+      color: #333;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      width: 85%;
+      max-width: 600px;
+      border-radius: 20px;
+      padding: 25px;
+      margin: 40px auto;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 1.2s ease-in-out;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #8ca6db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #7b94d1;
+      transform: scale(1.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #8ca6db;
+      color: white;
+    }
+    .back-btn {
+      text-decoration: none;
+      color: #fff;
+      background: #6a11cb;
+      padding: 10px 15px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 20px auto;
+      transition: 0.3s;
+    }
+    .back-btn:hover {
+      background: #5b0fb5;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>💰 Expense Tracker</h1>
+  <div class="container">
+    <form id="expense-form">
+      <input type="text" id="name" placeholder="Expense Name" required />
+      <input type="number" id="amount" placeholder="Amount (₹)" required />
+      <select id="category">
+        <option>Food</option>
+        <option>Travel</option>
+        <option>Shopping</option>
+        <option>Bills</option>
+        <option>Other</option>
+      </select>
+      <button type="submit">Add</button>
+    </form>
+
+    <table id="expense-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="container">
+    <h2>📈 Expense Chart</h2>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <a href="index.html" class="back-btn">⬅ Logout & Back to Home</a>
+
+  <script>
+    const form = document.getElementById("expense-form");
+    const tableBody = document.querySelector("#expense-table tbody");
+    const ctx = document.getElementById("chart").getContext("2d");
+
+    const categories = ["Food", "Travel", "Shopping", "Bills", "Other"];
+    const totals = [0, 0, 0, 0, 0];
+
+    const chart = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: categories,
+        datasets: [{
+          data: totals,
+          backgroundColor: ["#ff6384", "#36a2eb", "#ffcd56", "#4bc0c0", "#9966ff"],
+        }],
+      },
+    });
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const category = document.getElementById("category").value;
+
+      const row = `<tr><td>${name}</td><td>${category}</td><td>${amount.toFixed(2)}</td></tr>`;
+      tableBody.insertAdjacentHTML("beforeend", row);
+
+      const index = categories.indexOf(category);
+      totals[index] += amount;
+      chart.update();
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
